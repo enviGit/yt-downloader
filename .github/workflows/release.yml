@@ -30,6 +30,10 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Clean
+        if: runner.os == 'Windows'
+        run: cd src-tauri && cargo clean
+
       - name: Build and publish Tauri app
         uses: tauri-apps/tauri-action@v0
         env:

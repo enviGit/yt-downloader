@@ -3,6 +3,11 @@ use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
 
 #[tauri::command]
+fn file_exists(path: String) -> bool {
+    std::path::Path::new(&path).exists()
+}
+
+#[tauri::command]
 async fn start_download(app: AppHandle, url: String, format: String) -> Result<String, String> {
     let mut args = vec![];
 
@@ -15,6 +20,9 @@ async fn start_download(app: AppHandle, url: String, format: String) -> Result<S
 
     args.push("--newline".to_string());
     args.push("--no-colors".to_string());
+
+    args.push("--extractor-args".to_string());
+    args.push("youtube:player_client=android,web".to_string());
 
     if format == "audio" {
         args.push("-x".to_string());
@@ -32,6 +40,10 @@ async fn start_download(app: AppHandle, url: String, format: String) -> Result<S
 
     args.push("-P".to_string());
     args.push("~/Downloads".to_string());
+
+    args.push("-o".to_string());
+    args.push("~/Downloads/%(title)s [%(id)s].%(ext)s".to_string());
+
     args.push(url.clone());
 
     let (mut rx, _child) = app
@@ -85,7 +97,7 @@ async fn start_download(app: AppHandle, url: String, format: String) -> Result<S
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![start_download])
+        .invoke_handler(tauri::generate_handler![start_download, file_exists])
         .run(tauri::generate_context!())
         .expect("Error while running the application");
 }

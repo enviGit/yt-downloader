@@ -21,6 +21,14 @@ const savedLang = localStorage.getItem('appLang') || 'en';
 const savedTheme = localStorage.getItem('appTheme') || 'theme-orchid-plum';
 let currentLang = savedLang;
 
+let isDownloading = false;
+let downloadPhase = 1;
+let lastPercentage = 0;
+let selectedFormat = 'video';
+
+let currentFilePath = "";
+let fileCheckInterval = null;
+
 function updateLanguage(lang) {
   currentLang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -55,14 +63,12 @@ document.querySelectorAll('.custom-select').forEach(select => {
 
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-
     document.querySelectorAll('.select-options').forEach(opt => {
       if (opt !== optionsContainer) {
         opt.classList.remove('open');
         opt.previousElementSibling.classList.remove('active');
       }
     });
-
     optionsContainer.classList.toggle('open');
     trigger.classList.toggle('active');
   });
@@ -96,6 +102,12 @@ document.querySelectorAll('.theme-option').forEach(option => {
 });
 
 const stopAndResetPlayers = () => {
+  if (fileCheckInterval) {
+    clearInterval(fileCheckInterval);
+    fileCheckInterval = null;
+  }
+  currentFilePath = "";
+
   [videoPlayer, audioPlayer].forEach(p => {
     p.pause();
     p.currentTime = 0;
@@ -107,20 +119,14 @@ const stopAndResetPlayers = () => {
 };
 
 const handleMediaError = (e) => {
-  e.target.pause();
-  e.target.removeAttribute('src');
-  e.target.load();
-
-  mediaPreviewBlock.classList.add('hidden');
-  videoPlayer.classList.add('hidden');
-  audioPlayer.classList.add('hidden');
-  statusMessage.textContent = "Preview error: Could not load media.";
+  if (isDownloading) return;
+  stopAndResetPlayers();
+  statusMessage.textContent = "Media file moved, deleted or corrupted.";
 };
 
 videoPlayer.addEventListener('error', handleMediaError);
 audioPlayer.addEventListener('error', handleMediaError);
 
-let lastPercentage = 0;
 listen('ytdlp-stdout', (event) => {
   const line = event.payload;
 
@@ -129,11 +135,24 @@ listen('ytdlp-stdout', (event) => {
     if (percentMatch) {
       const p = parseFloat(percentMatch[1]);
 
-      if (p >= lastPercentage) {
-          lastPercentage = p;
-          progressBar.style.width = p + '%';
-          document.getElementById('progress-percent').textContent = p + '%';
+      if (selectedFormat === 'video' && downloadPhase === 1 && lastPercentage > 75 && p < 15) {
+        downloadPhase = 2;
       }
+      lastPercentage = p;
+
+      let displayPercent = p;
+      if (selectedFormat === 'video') {
+        if (downloadPhase === 1) {
+          displayPercent = p * 0.85;
+        } else {
+          displayPercent = 85 + (p * 0.13);
+        }
+      } else {
+        displayPercent = p * 0.95;
+      }
+
+      progressBar.style.width = displayPercent.toFixed(1) + '%';
+      document.getElementById('progress-percent').textContent = displayPercent.toFixed(1) + '%';
     }
 
     const speedMatch = line.match(/at\s+~?\s*([0-9.]+[a-zA-Z]+\/s)/);
@@ -148,15 +167,15 @@ downloadBtn.addEventListener('click', async () => {
   const url = urlInput.value;
   if (!url) return;
 
-  const selectedFormat = document.querySelector('input[name="format"]:checked').value;
+  isDownloading = true;
+  downloadPhase = 1;
+  lastPercentage = 0;
+  selectedFormat = document.querySelector('input[name="format"]:checked').value;
+
   const t = translations[currentLang] || translations['en'];
   statusMessage.textContent = t.downloading || "Starting download...";
 
   stopAndResetPlayers();
-
-  mediaPreviewBlock.classList.add('hidden');
-  videoPlayer.classList.add('hidden');
-  audioPlayer.classList.add('hidden');
 
   progressBar.style.width = '0%';
   document.getElementById('progress-percent').textContent = '0%';
@@ -172,13 +191,19 @@ downloadBtn.addEventListener('click', async () => {
       format: selectedFormat
     });
 
+    isDownloading = false;
     progressContainer.classList.remove('active');
     progressStats.classList.add('hidden');
-    lastPercentage = 0;
+
+    if (!downloadedFilePath.includes('/') && !downloadedFilePath.includes('\\')) {
+       statusMessage.textContent = downloadedFilePath;
+       return;
+    }
 
     statusMessage.textContent = "Download complete!";
 
     setTimeout(() => {
+      currentFilePath = downloadedFilePath;
       const secureUrl = convertFileSrc(downloadedFilePath) + '?t=' + Date.now();
       mediaPreviewBlock.classList.remove('hidden');
 
@@ -189,9 +214,20 @@ downloadBtn.addEventListener('click', async () => {
         audioPlayer.src = secureUrl;
         audioPlayer.classList.remove('hidden');
       }
-    }, 200);
+
+      fileCheckInterval = setInterval(async () => {
+        if (!currentFilePath) return;
+        const exists = await invoke('file_exists', { path: currentFilePath });
+        if (!exists) {
+          stopAndResetPlayers();
+          statusMessage.textContent = "Media file moved or deleted from disk.";
+        }
+      }, 1000);
+
+    }, 250);
 
   } catch (error) {
+    isDownloading = false;
     progressContainer.classList.remove('active');
     progressStats.classList.add('hidden');
     statusMessage.textContent = "Error: " + error;

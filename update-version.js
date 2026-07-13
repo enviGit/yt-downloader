@@ -1,6 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const newVersion = process.argv[2];
 
@@ -25,21 +29,29 @@ const updateJSON = (filePath, keyPath, value) => {
   console.log(`Updated ${filePath}`);
 };
 
-// 1. Update package.json and package-lock.json
 updateJSON('package.json', ['version'], newVersion);
 updateJSON('package-lock.json', ['version'], newVersion);
-if (fs.existsSync(path.join(__dirname, 'package-lock.json'))) {
-  const lock = JSON.parse(fs.readFileSync(path.join(__dirname, 'package-lock.json'), 'utf8'));
+const lockPath = path.join(__dirname, 'package-lock.json');
+if (fs.existsSync(lockPath)) {
+  const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
   if (lock.packages && lock.packages['']) {
     lock.packages[''].version = newVersion;
-    fs.writeFileSync(path.join(__dirname, 'package-lock.json'), JSON.stringify(lock, null, 2) + '\n');
+    fs.writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n');
   }
 }
 
-// 2. Update tauri.conf.json
-updateJSON('src-tauri/tauri.conf.json', ['package', 'version'], newVersion);
+const tauriConfPath = path.join(__dirname, 'src-tauri/tauri.conf.json');
+if (fs.existsSync(tauriConfPath)) {
+  const tauriConf = JSON.parse(fs.readFileSync(tauriConfPath, 'utf8'));
+  if (tauriConf.package) {
+    tauriConf.package.version = newVersion;
+  } else {
+    tauriConf.version = newVersion;
+  }
+  fs.writeFileSync(tauriConfPath, JSON.stringify(tauriConf, null, 2) + '\n');
+  console.log('Updated src-tauri/tauri.conf.json');
+}
 
-// 3. Update Cargo.toml
 const cargoTomlPath = path.join(__dirname, 'src-tauri', 'Cargo.toml');
 if (fs.existsSync(cargoTomlPath)) {
   let cargoContent = fs.readFileSync(cargoTomlPath, 'utf8');
@@ -48,7 +60,6 @@ if (fs.existsSync(cargoTomlPath)) {
   console.log('Updated src-tauri/Cargo.toml');
 }
 
-// 4. Update Cargo.lock using Cargo check
 try {
   console.log('Updating Cargo.lock...');
   execSync('cd src-tauri && cargo check', { stdio: 'ignore' });

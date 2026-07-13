@@ -6,50 +6,46 @@
     <title>YT Downloader</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="theme-neon-violet">
+  <body>
     <div class="glass-container">
 
       <header class="top-bar">
 
         <div class="dropdown-wrapper">
-          <span class="dropdown-label" data-i18n="languageLabel">Language</span>
-          <div class="custom-select">
-            <div class="select-trigger" id="language-trigger">EN</div>
-            <div class="select-options">
-              <div class="option lang-option" data-value="en">EN</div>
-              <div class="option lang-option" data-value="pl">PL</div>
-              <div class="option lang-option" data-value="fr">FR</div>
-              <div class="option lang-option" data-value="it">IT</div>
-              <div class="option lang-option" data-value="pt">PT</div>
-              <div class="option lang-option" data-value="es">ES</div>
-              <div class="option lang-option" data-value="de">DE</div>
-              <div class="option lang-option" data-value="ko">KO</div>
-              <div class="option lang-option" data-value="ja">JA</div>
-              <div class="option lang-option" data-value="zh">ZH</div>
+            <span class="dropdown-label" data-i18n="languageLabel">Language</span>
+            <div class="custom-select">
+                <div class="select-trigger" id="language-trigger">
+                  <span class="flag-icon flag-en"></span>EN
+                </div>
+                <div class="select-options">
+                  <div class="option lang-option" data-value="en"><span class="flag-icon flag-en"></span>EN</div>
+                  <div class="option lang-option" data-value="es"><span class="flag-icon flag-es"></span>ES</div>
+                  <div class="option lang-option" data-value="fr"><span class="flag-icon flag-fr"></span>FR</div>
+                  <div class="option lang-option" data-value="de"><span class="flag-icon flag-de"></span>DE</div>
+                  <div class="option lang-option" data-value="it"><span class="flag-icon flag-it"></span>IT</div>
+                  <div class="option lang-option" data-value="pt"><span class="flag-icon flag-pt"></span>PT</div>
+                  <div class="option lang-option" data-value="pl"><span class="flag-icon flag-pl"></span>PL</div>
+                  <div class="option lang-option" data-value="zh"><span class="flag-icon flag-zh"></span>ZH</div>
+                  <div class="option lang-option" data-value="ja"><span class="flag-icon flag-ja"></span>JA</div>
+                  <div class="option lang-option" data-value="ko"><span class="flag-icon flag-ko"></span>KO</div>
+                </div>
             </div>
-          </div>
         </div>
 
         <div class="dropdown-wrapper">
           <span class="dropdown-label" data-i18n="themeLabel">Theme</span>
           <div class="custom-select">
             <div class="select-trigger" id="theme-trigger">
-              <div class="theme-circle" style="--c-bg: #2d1b69; --c-pri: #c8ff3d;"></div>
-              Neon & Violet
+              <div class="theme-circle" style="--c-bg: #2e0f35; --c-pri: #e46cff;"></div>
+              Orchid & Plum
             </div>
             <div class="select-options">
 
-              <div class="optgroup-label" data-i18n="lightThemes">Light Themes</div>
-              <div class="option theme-option" data-value="theme-orange-vanilla">
-                <div class="theme-circle" style="--c-bg: #fff4d6; --c-pri: #fc6c26;"></div>
-                Orange & Vanilla
-              </div>
-              <div class="option theme-option" data-value="theme-indigo-lilac">
-                <div class="theme-circle" style="--c-bg: #e8deff; --c-pri: #5b3df5;"></div>
-                Indigo & Lilac
-              </div>
-
               <div class="optgroup-label" data-i18n="darkThemes">Dark Themes</div>
+              <div class="option theme-option" data-value="theme-orchid-plum">
+                <div class="theme-circle" style="--c-bg: #2e0f35; --c-pri: #e46cff;"></div>
+                Orchid & Plum
+              </div>
               <div class="option theme-option" data-value="theme-neon-violet">
                 <div class="theme-circle" style="--c-bg: #2d1b69; --c-pri: #c8ff3d;"></div>
                 Neon & Violet
@@ -62,9 +58,15 @@
                 <div class="theme-circle" style="--c-bg: #2f3a1d; --c-pri: #cfff74;"></div>
                 Lime & Olive
               </div>
-              <div class="option theme-option" data-value="theme-orchid-plum">
-                <div class="theme-circle" style="--c-bg: #2e0f35; --c-pri: #e46cff;"></div>
-                Orchid & Plum
+
+              <div class="optgroup-label" data-i18n="lightThemes">Light Themes</div>
+              <div class="option theme-option" data-value="theme-indigo-lilac">
+                <div class="theme-circle" style="--c-bg: #e8deff; --c-pri: #5b3df5;"></div>
+                Indigo & Lilac
+              </div>
+              <div class="option theme-option" data-value="theme-orange-vanilla">
+                <div class="theme-circle" style="--c-bg: #fff4d6; --c-pri: #fc6c26;"></div>
+                Orange & Vanilla
               </div>
 
             </div>
@@ -94,8 +96,28 @@
           </div>
         </div>
 
+        <div id="progress-container" class="progress-container">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="progress-stats" class="progress-stats hidden">
+          <span id="progress-percent">0%</span>
+          <span id="progress-speed">0 MB/s</span>
+          <span id="progress-eta">ETA: --:--</span>
+        </div>
+
         <p id="status-message"></p>
         <div id="update-status">Checking for updates...</div>
+
+        <div id="media-preview" class="media-preview hidden">
+          <div class="preview-header">
+            <span class="dropdown-label" data-i18n="previewLabel">Media Preview</span>
+          </div>
+          <div class="player-wrapper">
+            <video id="video-player" class="player-element hidden" controls></video>
+            <audio id="audio-player" class="player-element hidden" controls></audio>
+          </div>
+        </div>
+
       </main>
 
     </div>

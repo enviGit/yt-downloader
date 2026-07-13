@@ -11,7 +11,8 @@ export const translations = {
     updateAvailable: "Update available: ",
     upToDate: "App is up to date",
     languageLabel: "Language",
-    themeLabel: "Theme"
+    themeLabel: "Theme",
+    previewLabel: "Media Preview"
   },
   pl: {
     title: "Pobierz Wideo",
@@ -25,7 +26,8 @@ export const translations = {
     updateAvailable: "Dostępna nowa wersja: ",
     upToDate: "Aplikacja jest aktualna",
     languageLabel: "Język",
-    themeLabel: "Motyw"
+    themeLabel: "Motyw",
+    previewLabel: "Podgląd wideo"
   },
   fr: {
     title: "Télécharger la vidéo",
@@ -39,7 +41,8 @@ export const translations = {
     updateAvailable: "Mise à jour disponible: ",
     upToDate: "L'application est à jour",
     languageLabel: "Langue",
-    themeLabel: "Thème"
+    themeLabel: "Thème",
+    previewLabel: "Aperçu du média"
   },
   it: {
     title: "Scarica Video",
@@ -53,7 +56,8 @@ export const translations = {
     updateAvailable: "Aggiornamento disponibile: ",
     upToDate: "L'app è aggiornata",
     languageLabel: "Lingua",
-    themeLabel: "Tema"
+    themeLabel: "Tema",
+    previewLabel: "Anteprima multimediale"
   },
   pt: {
     title: "Baixar Vídeo",
@@ -67,7 +71,8 @@ export const translations = {
     updateAvailable: "Atualização disponível: ",
     upToDate: "O aplicativo está atualizado",
     languageLabel: "Idioma",
-    themeLabel: "Tema"
+    themeLabel: "Tema",
+    previewLabel: "Pré-visualização"
   },
   es: {
     title: "Descargar Video",
@@ -81,7 +86,8 @@ export const translations = {
     updateAvailable: "Actualización disponible: ",
     upToDate: "La aplicación está actualizada",
     languageLabel: "Idioma",
-    themeLabel: "Tema"
+    themeLabel: "Tema",
+    previewLabel: "Vista previa"
   },
   de: {
     title: "Video Herunterladen",
@@ -95,7 +101,8 @@ export const translations = {
     updateAvailable: "Update verfügbar: ",
     upToDate: "App ist auf dem neuesten Stand",
     languageLabel: "Sprache",
-    themeLabel: "Design"
+    themeLabel: "Design",
+    previewLabel: "Medienvorschau"
   },
   ko: {
     title: "비디오 다운로드",
@@ -109,7 +116,8 @@ export const translations = {
     updateAvailable: "업데이트 가능: ",
     upToDate: "앱이 최신 버전입니다",
     languageLabel: "언어",
-    themeLabel: "테마"
+    themeLabel: "테마",
+    previewLabel: "미디어 미리보기"
   },
   ja: {
     title: "ビデオをダウンロード",
@@ -123,7 +131,8 @@ export const translations = {
     updateAvailable: "利用可能なアップデート: ",
     upToDate: "アプリは最新です",
     languageLabel: "言語",
-    themeLabel: "テーマ"
+    themeLabel: "テーマ",
+    previewLabel: "メディアプレビュー"
   },
   zh: {
     title: "下载视频",
@@ -137,6 +146,7 @@ export const translations = {
     updateAvailable: "有可用更新: ",
     upToDate: "应用已是最新版本",
     languageLabel: "语言",
-    themeLabel: "主题"
+    themeLabel: "主题",
+    previewLabel: "媒体预览"
   }
 };

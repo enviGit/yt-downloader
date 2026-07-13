@@ -8,7 +8,12 @@ fn file_exists(path: String) -> bool {
 }
 
 #[tauri::command]
-async fn start_download(app: AppHandle, url: String, format: String) -> Result<String, String> {
+async fn start_download(
+    app: AppHandle,
+    url: String,
+    format: String,
+    custom_path: Option<String>,
+) -> Result<String, String> {
     let mut args = vec![];
 
     let resource_dir = app
@@ -17,6 +22,17 @@ async fn start_download(app: AppHandle, url: String, format: String) -> Result<S
         .map_err(|e| format!("Failed to find resource directory: {}", e))?;
 
     let ffmpeg_dir = resource_dir.join("ffmpeg_bin");
+
+    let download_dir = match custom_path {
+        Some(p) if !p.is_empty() => p,
+        _ => {
+            let default_dir = app
+                .path()
+                .download_dir()
+                .map_err(|e| format!("Failed to get download dir: {}", e))?;
+            default_dir.to_string_lossy().to_string()
+        }
+    };
 
     args.push("--newline".to_string());
     args.push("--no-colors".to_string());
@@ -39,10 +55,10 @@ async fn start_download(app: AppHandle, url: String, format: String) -> Result<S
     args.push(ffmpeg_dir.to_string_lossy().to_string());
 
     args.push("-P".to_string());
-    args.push("~/Downloads".to_string());
+    args.push(download_dir);
 
     args.push("-o".to_string());
-    args.push("~/Downloads/%(title)s [%(id)s].%(ext)s".to_string());
+    args.push("%(title)s [%(id)s].%(ext)s".to_string());
 
     args.push(url.clone());
 

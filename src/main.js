@@ -9,6 +9,7 @@ const downloadBtn = document.getElementById('download-btn');
 const urlInput = document.getElementById('url-input');
 const statusMessage = document.getElementById('status-message');
 const updateStatus = document.getElementById('update-status');
+const checkUpdateBtn = document.getElementById('check-update-btn');
 
 const progressContainer = document.getElementById('progress-container');
 const progressBar = document.getElementById('progress-bar');
@@ -28,6 +29,20 @@ let selectedFormat = 'video';
 
 let currentFilePath = "";
 let fileCheckInterval = null;
+
+let targetPercent = 0;
+let currentPercent = 0;
+let animationFrameId = null;
+
+const ytRegex = /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|playlist\?list=)|youtu\.be\/).+$/;
+
+function validateUrl() {
+  const isValid = ytRegex.test(urlInput.value.trim());
+  downloadBtn.disabled = !isValid;
+}
+
+urlInput.addEventListener('input', validateUrl);
+downloadBtn.disabled = true;
 
 function updateLanguage(lang) {
   currentLang = lang;
@@ -108,18 +123,25 @@ const stopAndResetPlayers = () => {
   }
   currentFilePath = "";
 
-  [videoPlayer, audioPlayer].forEach(p => {
-    p.pause();
-    p.currentTime = 0;
-    p.src = "";
-    p.load();
-    p.classList.add('hidden');
-  });
-  mediaPreviewBlock.classList.add('hidden');
+  mediaPreviewBlock.classList.remove('visible');
+  videoPlayer.classList.remove('visible');
+  audioPlayer.classList.remove('visible');
+
+  setTimeout(() => {
+    [videoPlayer, audioPlayer].forEach(p => {
+      p.pause();
+      p.currentTime = 0;
+      p.removeAttribute('src');
+      p.load();
+    });
+  }, 500);
 };
 
 const handleMediaError = (e) => {
   if (isDownloading) return;
+  const currentSrc = e.target.getAttribute('src');
+  if (!currentSrc || currentSrc.trim() === '') return;
+
   stopAndResetPlayers();
   statusMessage.textContent = "Media file moved, deleted or corrupted.";
 };
@@ -127,39 +149,89 @@ const handleMediaError = (e) => {
 videoPlayer.addEventListener('error', handleMediaError);
 audioPlayer.addEventListener('error', handleMediaError);
 
+function smoothProgressLoop() {
+  if (!isDownloading && Math.abs(targetPercent - currentPercent) < 0.1) {
+    currentPercent = targetPercent;
+    updateProgressBarDOM(currentPercent);
+    animationFrameId = null;
+    return;
+  }
+
+  if (progressBar.classList.contains('indeterminate') && targetPercent >= 95) {
+    if (targetPercent < 99.8) {
+      targetPercent += 0.01;
+    }
+  }
+
+  const diff = targetPercent - currentPercent;
+  if (diff > 0) {
+     currentPercent += diff * 0.08;
+  }
+
+  if (currentPercent > 99.9 && isDownloading) {
+      currentPercent = 99.9;
+  }
+
+  updateProgressBarDOM(currentPercent);
+  animationFrameId = requestAnimationFrame(smoothProgressLoop);
+}
+
+function updateProgressBarDOM(val) {
+  if (!progressBar.classList.contains('indeterminate')) {
+    progressBar.style.width = val.toFixed(1) + '%';
+    document.getElementById('progress-percent').textContent = Math.floor(val) + '%';
+  }
+}
+
 listen('ytdlp-stdout', (event) => {
   const line = event.payload;
 
+  if (line.includes('[ExtractAudio]') || line.includes('[Destination]') && selectedFormat === 'audio' && lastPercentage > 90) {
+    progressBar.classList.add('indeterminate');
+    statusMessage.textContent = "Extracting audio and converting to MP3...";
+    document.getElementById('progress-percent').textContent = "99%";
+    document.getElementById('progress-speed').textContent = "Processing...";
+    targetPercent = 99.5;
+    return;
+  }
+
   if (line.includes('[download]') && line.includes('%')) {
+    progressBar.classList.remove('indeterminate');
+
     const percentMatch = line.match(/(\d+\.\d+)%/);
     if (percentMatch) {
       const p = parseFloat(percentMatch[1]);
 
-      if (selectedFormat === 'video' && downloadPhase === 1 && lastPercentage > 75 && p < 15) {
-        downloadPhase = 2;
+      if (p < lastPercentage && (lastPercentage - p) > 5) {
+         return;
       }
-      lastPercentage = p;
 
       let displayPercent = p;
       if (selectedFormat === 'video') {
-        if (downloadPhase === 1) {
-          displayPercent = p * 0.85;
-        } else {
-          displayPercent = 85 + (p * 0.13);
-        }
+         if (p < lastPercentage || downloadPhase === 2) {
+             downloadPhase = 2;
+             displayPercent = 85 + (p * 0.14);
+         } else {
+             displayPercent = p * 0.85;
+         }
       } else {
-        displayPercent = p * 0.95;
+         displayPercent = p * 0.95;
       }
 
-      progressBar.style.width = displayPercent.toFixed(1) + '%';
-      document.getElementById('progress-percent').textContent = displayPercent.toFixed(1) + '%';
+      lastPercentage = p;
+      targetPercent = displayPercent;
     }
 
     const speedMatch = line.match(/at\s+~?\s*([0-9.]+[a-zA-Z]+\/s)/);
     const etaMatch = line.match(/ETA\s+([\d:]+)/);
 
-    if (speedMatch) document.getElementById('progress-speed').textContent = speedMatch[1];
-    if (etaMatch) document.getElementById('progress-eta').textContent = 'ETA: ' + etaMatch[1];
+    if (speedMatch && !speedMatch[1].startsWith("0.0")) {
+        document.getElementById('progress-speed').textContent = speedMatch[1];
+    }
+
+    if (etaMatch && etaMatch[1] !== "00:00") {
+        document.getElementById('progress-eta').textContent = 'ETA: ' + etaMatch[1];
+    }
   }
 });
 
@@ -170,6 +242,8 @@ downloadBtn.addEventListener('click', async () => {
   isDownloading = true;
   downloadPhase = 1;
   lastPercentage = 0;
+  targetPercent = 0;
+  currentPercent = 0;
   selectedFormat = document.querySelector('input[name="format"]:checked').value;
 
   const t = translations[currentLang] || translations['en'];
@@ -178,12 +252,18 @@ downloadBtn.addEventListener('click', async () => {
   stopAndResetPlayers();
 
   progressBar.style.width = '0%';
-  document.getElementById('progress-percent').textContent = '0%';
+  progressBar.classList.add('indeterminate');
+
+  document.getElementById('progress-percent').textContent = 'Connecting...';
   document.getElementById('progress-speed').textContent = '0 KB/s';
   document.getElementById('progress-eta').textContent = 'ETA: --:--';
 
   progressContainer.classList.add('active');
-  progressStats.classList.remove('hidden');
+  progressStats.classList.add('visible');
+
+  if (!animationFrameId) {
+    animationFrameId = requestAnimationFrame(smoothProgressLoop);
+  }
 
   try {
     const downloadedFilePath = await invoke('start_download', {
@@ -191,9 +271,14 @@ downloadBtn.addEventListener('click', async () => {
       format: selectedFormat
     });
 
+    progressBar.classList.remove('indeterminate');
+    targetPercent = 100;
+
+    await new Promise(resolve => setTimeout(resolve, 450));
+
     isDownloading = false;
     progressContainer.classList.remove('active');
-    progressStats.classList.add('hidden');
+    progressStats.classList.remove('visible');
 
     if (!downloadedFilePath.includes('/') && !downloadedFilePath.includes('\\')) {
        statusMessage.textContent = downloadedFilePath;
@@ -205,14 +290,15 @@ downloadBtn.addEventListener('click', async () => {
     setTimeout(() => {
       currentFilePath = downloadedFilePath;
       const secureUrl = convertFileSrc(downloadedFilePath) + '?t=' + Date.now();
-      mediaPreviewBlock.classList.remove('hidden');
+
+      mediaPreviewBlock.classList.add('visible');
 
       if (selectedFormat === 'video') {
         videoPlayer.src = secureUrl;
-        videoPlayer.classList.remove('hidden');
+        videoPlayer.classList.add('visible');
       } else {
         audioPlayer.src = secureUrl;
-        audioPlayer.classList.remove('hidden');
+        audioPlayer.classList.add('visible');
       }
 
       fileCheckInterval = setInterval(async () => {
@@ -228,30 +314,35 @@ downloadBtn.addEventListener('click', async () => {
 
   } catch (error) {
     isDownloading = false;
+    progressBar.classList.remove('indeterminate');
     progressContainer.classList.remove('active');
-    progressStats.classList.add('hidden');
+    progressStats.classList.remove('visible');
     statusMessage.textContent = "Error: " + error;
   }
 });
 
-async function checkForUpdates() {
+checkUpdateBtn.addEventListener('click', async () => {
   try {
     const currentVersion = await getVersion();
-    const repoUrl = 'https://api.github.com/repos/enviGit/yt-downloader/releases/latest';
+    const repoUrl = 'https://github.com/enviGit/yt-downloader/releases/latest';
+    const apiUrl = 'https://api.github.com/repos/enviGit/yt-downloader/releases/latest';
 
-    const response = await fetch(repoUrl);
+    updateStatus.textContent = "Checking...";
+
+    const response = await fetch(apiUrl);
     const data = await response.json();
     const latestVersion = data.tag_name.replace('v', '');
 
     if (latestVersion !== currentVersion) {
-      updateStatus.textContent = translations[currentLang].updateAvailable + data.tag_name;
-      updateStatus.style.color = 'var(--primary)';
+      updateStatus.innerHTML = `Update available: <span class="update-link" id="update-link">${data.tag_name}</span>`;
+      document.getElementById('update-link').addEventListener('click', () => {
+        invoke('plugin:shell|open', { path: repoUrl });
+      });
     } else {
-      updateStatus.textContent = translations[currentLang].upToDate;
+      const t = translations[currentLang] || translations['en'];
+      updateStatus.textContent = t.upToDate || "Up to date";
     }
   } catch (error) {
-    updateStatus.textContent = '';
+    updateStatus.textContent = 'Error checking for updates';
   }
-}
-
-checkForUpdates();
+});

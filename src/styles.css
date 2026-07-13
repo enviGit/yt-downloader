@@ -5,49 +5,6 @@
   box-sizing: border-box;
 }
 
-
-.theme-neon-violet {
-  --primary: #c8ff3d; --bg-color: #2d1b69; --text-main: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
-  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
-  --btn-text: #000000;
-}
-
-.theme-mint-graphite {
-  --primary: #b8f7e4; --bg-color: #25272c; --text-main: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
-  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
-  --btn-text: #000000;
-}
-
-.theme-lime-olive {
-  --primary: #cfff74; --bg-color: #2f3a1d; --text-main: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
-  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
-  --btn-text: #000000;
-}
-
-.theme-orchid-plum {
-  --primary: #e46cff; --bg-color: #2e0f35; --text-main: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
-  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
-  --btn-text: #000000;
-}
-
-.theme-orange-vanilla {
-  --primary: #fc6c26; --bg-color: #fff4d6; --text-main: #25272c;
-  --glass-bg: rgba(0, 0, 0, 0.05); --glass-border: rgba(0, 0, 0, 0.1);
-  --input-bg: rgba(255, 255, 255, 0.5); --placeholder: rgba(0, 0, 0, 0.5);
-  --btn-text: #ffffff;
-}
-
-.theme-indigo-lilac {
-  --primary: #5b3df5; --bg-color: #e8deff; --text-main: #2e0f35;
-  --glass-bg: rgba(0, 0, 0, 0.05); --glass-border: rgba(0, 0, 0, 0.1);
-  --input-bg: rgba(255, 255, 255, 0.5); --placeholder: rgba(0, 0, 0, 0.5);
-  --btn-text: #ffffff;
-}
-
 body {
   background-color: var(--bg-color);
   color: var(--text-main);
@@ -260,8 +217,57 @@ h1 {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 14px;
+  position: relative;
+  user-select: none;
+}
+
+.radio-group input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-radio {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-radio::after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.radio-group label:hover input ~ .custom-radio {
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+.radio-group input:checked ~ .custom-radio {
+  border-color: var(--primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.radio-group input:checked ~ .custom-radio::after {
+  display: block;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 input[type="url"] {
@@ -302,6 +308,15 @@ button:hover {
   box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
+button:disabled {
+  background-color: var(--input-bg);
+  color: var(--placeholder);
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+}
+
 .input-group {
   display: flex;
   gap: 12px;
@@ -314,18 +329,59 @@ button:hover {
   margin-top: 15px;
 }
 
+.update-section {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}
+
+#check-update-btn {
+  background-color: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+#check-update-btn:hover {
+  background-color: var(--glass-bg);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.update-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.update-link:hover {
+  text-decoration: underline;
+}
+
 .progress-container {
   width: 100%;
-  height: 4px;
+  height: 6px;
   background: var(--glass-border);
   border-radius: 4px;
   margin-top: 20px;
   overflow: hidden;
-  display: none;
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.4s ease, max-height 0.4s ease, transform 0.4s ease;
+  position: relative;
 }
 
 .progress-container.active {
-  display: block;
+  opacity: 1;
+  max-height: 10px;
+  transform: translateY(0);
 }
 
 .progress-bar {
@@ -333,19 +389,73 @@ button:hover {
   height: 100%;
   background: var(--primary);
   border-radius: 4px;
-  transition: width 0.2s ease;
+  transition: width 0.1s linear;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--text-main) 30%, transparent) 40%,
+    color-mix(in srgb, var(--text-main) 70%, transparent) 50%,
+    color-mix(in srgb, var(--text-main) 30%, transparent) 60%,
+    transparent 100%
+  );
+  animation: shine 1.2s infinite ease-in-out;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(250%); }
+}
+
+.progress-bar.indeterminate {
+  width: 40% !important;
+  animation: liquidBounce 1.8s infinite cubic-bezier(0.65, 0, 0.35, 1) alternate;
+}
+
+@keyframes liquidBounce {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(350%); }
 }
 
 .progress-stats {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 12px;
-  opacity: 0.8;
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.4s ease, max-height 0.4s ease, transform 0.4s ease;
 }
 
-.progress-stats.hidden {
-  display: none;
+.progress-stats.visible {
+  opacity: 0.8;
+  max-height: 20px;
+  transform: translateY(0);
+}
+
+#status-message {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 20px;
+  animation: textReveal 0.3s ease forwards;
+}
+
+@keyframes textReveal {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .media-preview {
@@ -353,16 +463,22 @@ button:hover {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  padding: 16px;
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  padding: 0 16px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: scale(0.97) translateY(10px);
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+              max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+              padding 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.media-preview.hidden {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
+.media-preview.visible {
+  opacity: 1;
+  max-height: 500px;
+  padding: 16px;
+  transform: scale(1) translateY(0);
 }
 
 .preview-header {
@@ -386,10 +502,12 @@ button:hover {
   max-height: 400px;
   outline: none;
   border: none;
+  display: none;
 }
 
-.player-element.hidden {
-  display: none;
+.player-element.visible {
+  display: block;
+  animation: textReveal 0.4s ease forwards;
 }
 
 audio.player-element {

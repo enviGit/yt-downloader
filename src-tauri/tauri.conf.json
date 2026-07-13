@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "yt-downloader",
+  "productName": "YT Downloader",
   "version": "0.1.1",
   "identifier": "com.envi.yt-downloader",
   "build": {
@@ -18,7 +18,7 @@
       }
     ],
     "security": {
-      "csp": null,
+      "csp": "default-src 'self'; connect-src 'self' https://api.github.com; media-src 'self' asset:; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline';",
       "assetProtocol": {
         "enable": true,
         "scope": [
@@ -30,6 +30,8 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "Paweł Trojański",
+    "copyright": "Copyright (c) 2026",
     "resources": [
       "ffmpeg_bin/*"
     ],

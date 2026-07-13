@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YT Downloader</title>
+    <link rel="stylesheet" href="themes.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -87,10 +88,12 @@
           <div class="radio-group">
             <label>
               <input type="radio" name="format" value="video" checked>
+              <span class="custom-radio"></span>
               <span data-i18n="video">Video MP4</span>
             </label>
             <label>
               <input type="radio" name="format" value="audio">
+              <span class="custom-radio"></span>
               <span data-i18n="audio">Audio MP3</span>
             </label>
           </div>
@@ -106,7 +109,6 @@
         </div>
 
         <p id="status-message"></p>
-        <div id="update-status">Checking for updates...</div>
 
         <div id="media-preview" class="media-preview hidden">
           <div class="preview-header">
@@ -118,9 +120,15 @@
           </div>
         </div>
 
+        <div class="update-section">
+            <span id="update-status"></span>
+            <button id="check-update-btn" data-i18n="checkUpdate">Check for updates</button>
+        </div>
+
       </main>
 
     </div>
+
     <script type="module" src="main.js"></script>
   </body>
 </html>

@@ -1,0 +1,41 @@
+.theme-neon-violet {
+  --primary: #c8ff3d; --bg-color: #2d1b69; --text-main: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
+  --btn-text: #000000;
+}
+
+.theme-mint-graphite {
+  --primary: #b8f7e4; --bg-color: #25272c; --text-main: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
+  --btn-text: #000000;
+}
+
+.theme-lime-olive {
+  --primary: #cfff74; --bg-color: #2f3a1d; --text-main: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
+  --btn-text: #000000;
+}
+
+.theme-orchid-plum {
+  --primary: #e46cff; --bg-color: #2e0f35; --text-main: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.2); --placeholder: rgba(255, 255, 255, 0.5);
+  --btn-text: #000000;
+}
+
+.theme-orange-vanilla {
+  --primary: #fc6c26; --bg-color: #fff4d6; --text-main: #25272c;
+  --glass-bg: rgba(0, 0, 0, 0.05); --glass-border: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.5); --placeholder: rgba(0, 0, 0, 0.5);
+  --btn-text: #ffffff;
+}
+
+.theme-indigo-lilac {
+  --primary: #5b3df5; --bg-color: #e8deff; --text-main: #2e0f35;
+  --glass-bg: rgba(0, 0, 0, 0.05); --glass-border: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.5); --placeholder: rgba(0, 0, 0, 0.5);
+  --btn-text: #ffffff;
+}

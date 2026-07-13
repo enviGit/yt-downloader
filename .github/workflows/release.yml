@@ -44,3 +44,4 @@ jobs:
           releaseBody: "Automated release build."
           releaseDraft: false
           prerelease: false
+          args: --verbose

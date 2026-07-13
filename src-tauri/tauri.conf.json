@@ -30,7 +30,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "publisher": "Paweł Trojański",
+    "publisher": "Pawel Trojanski",
     "copyright": "Copyright (c) 2026",
     "resources": [
       "ffmpeg_bin/*"

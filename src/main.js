@@ -11,6 +11,11 @@ const statusMessage = document.getElementById('status-message');
 const updateStatus = document.getElementById('update-status');
 const checkUpdateBtn = document.getElementById('check-update-btn');
 
+const selectFolderBtn = document.getElementById('select-folder-btn');
+const resetFolderBtn = document.getElementById('reset-folder-btn');
+const selectedFolderPathSpan = document.getElementById('selected-folder-path');
+const radioFormatInputs = document.querySelectorAll('input[name="format"]');
+
 const progressContainer = document.getElementById('progress-container');
 const progressBar = document.getElementById('progress-bar');
 const progressStats = document.getElementById('progress-stats');
@@ -20,19 +25,60 @@ const audioPlayer = document.getElementById('audio-player');
 
 const savedLang = localStorage.getItem('appLang') || 'en';
 const savedTheme = localStorage.getItem('appTheme') || 'theme-orchid-plum';
-let currentLang = savedLang;
+const savedFormat = localStorage.getItem('appFormat') || 'video';
+let customDownloadPath = localStorage.getItem('appDownloadPath') || null;
 
+let currentLang = savedLang;
 let isDownloading = false;
 let downloadPhase = 1;
 let lastPercentage = 0;
-let selectedFormat = 'video';
-
+let selectedFormat = savedFormat;
 let currentFilePath = "";
 let fileCheckInterval = null;
-
 let targetPercent = 0;
 let currentPercent = 0;
 let animationFrameId = null;
+
+const formatVideoRadio = document.getElementById('format-video');
+const formatAudioRadio = document.getElementById('format-audio');
+if (savedFormat === 'audio') {
+  formatAudioRadio.checked = true;
+} else {
+  formatVideoRadio.checked = true;
+}
+
+radioFormatInputs.forEach(input => {
+  input.addEventListener('change', (e) => {
+    selectedFormat = e.target.value;
+    localStorage.setItem('appFormat', selectedFormat);
+  });
+});
+
+function updateFolderUI() {
+  if (customDownloadPath) {
+    selectedFolderPathSpan.textContent = customDownloadPath.length > 30 ? "..." + customDownloadPath.slice(-27) : customDownloadPath;
+    selectedFolderPathSpan.title = customDownloadPath;
+    selectedFolderPathSpan.removeAttribute('data-i18n');
+    resetFolderBtn.classList.remove('hidden');
+  } else {
+    selectedFolderPathSpan.setAttribute('data-i18n', 'defaultFolder');
+    selectedFolderPathSpan.textContent = translations[currentLang]?.defaultFolder || translations['en'].defaultFolder;
+    selectedFolderPathSpan.title = "";
+    resetFolderBtn.classList.add('hidden');
+  }
+}
+
+if (customDownloadPath) {
+  invoke('file_exists', { path: customDownloadPath }).then(exists => {
+    if (!exists) {
+      customDownloadPath = null;
+      localStorage.removeItem('appDownloadPath');
+    }
+    updateFolderUI();
+  });
+} else {
+  updateFolderUI();
+}
 
 const ytRegex = /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|playlist\?list=)|youtu\.be\/).+$/;
 
@@ -43,6 +89,29 @@ function validateUrl() {
 
 urlInput.addEventListener('input', validateUrl);
 downloadBtn.disabled = true;
+
+selectFolderBtn.addEventListener('click', async () => {
+  try {
+    const selected = await window.__TAURI__.dialog.open({
+      directory: true,
+      multiple: false,
+      title: "Select Download Directory"
+    });
+    if (selected) {
+      customDownloadPath = selected;
+      localStorage.setItem('appDownloadPath', selected);
+      updateFolderUI();
+    }
+  } catch (error) {
+    console.error("Folder selection failed:", error);
+  }
+});
+
+resetFolderBtn.addEventListener('click', () => {
+  customDownloadPath = null;
+  localStorage.removeItem('appDownloadPath');
+  updateFolderUI();
+});
 
 function updateLanguage(lang) {
   currentLang = lang;
@@ -237,13 +306,25 @@ listen('ytdlp-stdout', (event) => {
 
 downloadBtn.addEventListener('click', async () => {
   const url = urlInput.value;
-  if (!url) return;
+  if (!url || downloadBtn.disabled) return;
+
+  if (customDownloadPath) {
+      const exists = await invoke('file_exists', { path: customDownloadPath });
+      if (!exists) {
+        customDownloadPath = null;
+        localStorage.removeItem('appDownloadPath');
+        updateFolderUI();
+        const t = translations[currentLang] || translations['en'];
+        statusMessage.textContent = t.folderMissingError || "Selected folder no longer exists! Reverted to default. Please click download again.";        return;
+      }
+    }
 
   isDownloading = true;
   downloadPhase = 1;
   lastPercentage = 0;
   targetPercent = 0;
   currentPercent = 0;
+
   selectedFormat = document.querySelector('input[name="format"]:checked').value;
 
   const t = translations[currentLang] || translations['en'];
@@ -268,7 +349,8 @@ downloadBtn.addEventListener('click', async () => {
   try {
     const downloadedFilePath = await invoke('start_download', {
       url: url,
-      format: selectedFormat
+      format: selectedFormat,
+      customPath: customDownloadPath
     });
 
     progressBar.classList.remove('indeterminate');

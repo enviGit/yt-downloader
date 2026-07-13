@@ -322,46 +322,56 @@ button:disabled {
   gap: 12px;
 }
 
-#update-status {
-  font-size: 12px;
-  opacity: 0.7;
-  text-align: right;
-  margin-top: 15px;
-}
-
-.update-section {
-  margin-top: 25px;
+.folder-picker-row {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   gap: 15px;
+  margin-left: auto;
 }
 
-#check-update-btn {
+.secondary-btn {
   background-color: transparent;
   border: 1px solid var(--glass-border);
   color: var(--text-main);
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-#check-update-btn:hover {
+.secondary-btn:hover {
   background-color: var(--glass-bg);
   transform: translateY(-1px);
-  box-shadow: none;
 }
 
-.update-link {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: bold;
+.path-display {
+  font-size: 12px;
+  opacity: 0.6;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reset-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  opacity: 0.5;
+  font-size: 14px;
   cursor: pointer;
-  margin-left: 5px;
+  padding: 0 4px;
+  transition: opacity 0.2s, color 0.2s;
 }
 
-.update-link:hover {
-  text-decoration: underline;
+.reset-btn:hover {
+  opacity: 1;
+  color: var(--primary);
+}
+
+.reset-btn.hidden {
+  display: none;
 }
 
 .progress-container {
@@ -514,4 +524,46 @@ audio.player-element {
   max-height: 54px;
   width: 100%;
   border-radius: 12px;
+}
+
+#update-status {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: right;
+  margin-top: 15px;
+}
+
+.update-section {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}
+
+#check-update-btn {
+  background-color: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+#check-update-btn:hover {
+  background-color: var(--glass-bg);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.update-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.update-link:hover {
+  text-decoration: underline;
 }

@@ -12,7 +12,11 @@ export const translations = {
     upToDate: "App is up to date",
     languageLabel: "Language",
     themeLabel: "Theme",
-    previewLabel: "Media Preview"
+    previewLabel: "Media Preview",
+    checkUpdate: "Check for updates",
+    chooseFolder: "Choose Folder",
+    defaultFolder: "Default (Downloads)",
+    folderMissingError: "Selected folder no longer exists! Reverted to default. Please click download again."
   },
   pl: {
     title: "Pobierz Wideo",
@@ -27,7 +31,11 @@ export const translations = {
     upToDate: "Aplikacja jest aktualna",
     languageLabel: "Język",
     themeLabel: "Motyw",
-    previewLabel: "Podgląd wideo"
+    previewLabel: "Podgląd wideo",
+    checkUpdate: "Sprawdź aktualizacje",
+    chooseFolder: "Wybierz folder",
+    defaultFolder: "Domyślny (Pobrane)",
+    folderMissingError: "Wybrany folder już nie istnieje! Przywrócono domyślny. Kliknij pobierz ponownie."
   },
   fr: {
     title: "Télécharger la vidéo",
@@ -42,7 +50,11 @@ export const translations = {
     upToDate: "L'application est à jour",
     languageLabel: "Langue",
     themeLabel: "Thème",
-    previewLabel: "Aperçu du média"
+    previewLabel: "Aperçu du média",
+    checkUpdate: "Vérifier les mises à jour",
+    chooseFolder: "Choisir le dossier",
+    defaultFolder: "Défaut (Téléchargements)",
+    folderMissingError: "Le dossier sélectionné n'existe plus ! Rétabli par défaut. Veuillez cliquer à nouveau sur télécharger."
   },
   it: {
     title: "Scarica Video",
@@ -57,7 +69,11 @@ export const translations = {
     upToDate: "L'app è aggiornata",
     languageLabel: "Lingua",
     themeLabel: "Tema",
-    previewLabel: "Anteprima multimediale"
+    previewLabel: "Anteprima multimediale",
+    checkUpdate: "Controlla aggiornamenti",
+    chooseFolder: "Scegli cartella",
+    defaultFolder: "Predefinito (Download)",
+    folderMissingError: "La cartella selezionata non esiste più! Ripristinato al predefinito. Fai nuovamente clic su scarica."
   },
   pt: {
     title: "Baixar Vídeo",
@@ -72,7 +88,11 @@ export const translations = {
     upToDate: "O aplicativo está atualizado",
     languageLabel: "Idioma",
     themeLabel: "Tema",
-    previewLabel: "Pré-visualização"
+    previewLabel: "Pré-visualização",
+    checkUpdate: "Verificar atualizações",
+    chooseFolder: "Escolher pasta",
+    defaultFolder: "Padrão (Downloads)",
+    folderMissingError: "A pasta selecionada não existe mais! Revertido para o padrão. Clique em baixar novamente."
   },
   es: {
     title: "Descargar Video",
@@ -87,7 +107,11 @@ export const translations = {
     upToDate: "La aplicación está actualizada",
     languageLabel: "Idioma",
     themeLabel: "Tema",
-    previewLabel: "Vista previa"
+    previewLabel: "Vista previa",
+    checkUpdate: "Buscar actualizaciones",
+    chooseFolder: "Elegir carpeta",
+    defaultFolder: "Predeterminado (Descargas)",
+    folderMissingError: "¡La carpeta seleccionada ya no existe! Restablecido al predeterminado. Haz clic en descargar nuevamente."
   },
   de: {
     title: "Video Herunterladen",
@@ -102,7 +126,11 @@ export const translations = {
     upToDate: "App ist auf dem neuesten Stand",
     languageLabel: "Sprache",
     themeLabel: "Design",
-    previewLabel: "Medienvorschau"
+    previewLabel: "Medienvorschau",
+    checkUpdate: "Auf Updates prüfen",
+    chooseFolder: "Ordner auswählen",
+    defaultFolder: "Standard (Downloads)",
+    folderMissingError: "Der ausgewählte Ordner existiert nicht mehr! Auf Standard zurückgesetzt. Bitte klicke erneut auf Herunterladen."
   },
   ko: {
     title: "비디오 다운로드",
@@ -117,7 +145,11 @@ export const translations = {
     upToDate: "앱이 최신 버전입니다",
     languageLabel: "언어",
     themeLabel: "테마",
-    previewLabel: "미디어 미리보기"
+    previewLabel: "미디어 미리보기",
+    checkUpdate: "업데이트 확인",
+    chooseFolder: "폴더 선택",
+    defaultFolder: "기본값 (다운로드)",
+    folderMissingError: "선택한 폴더가 더 이상 존재하지 않습니다! 기본값으로 돌아갔습니다. 다시 다운로드를 클릭해주세요."
   },
   ja: {
     title: "ビデオをダウンロード",
@@ -132,7 +164,11 @@ export const translations = {
     upToDate: "アプリは最新です",
     languageLabel: "言語",
     themeLabel: "テーマ",
-    previewLabel: "メディアプレビュー"
+    previewLabel: "メディアプレビュー",
+    checkUpdate: "アップデートを確認",
+    chooseFolder: "フォルダを選択",
+    defaultFolder: "デフォルト (ダウンロード)",
+    folderMissingError: "選択したフォルダはもう存在しません！デフォルトに戻りました。もう一度ダウンロードをクリックしてください。"
   },
   zh: {
     title: "下载视频",
@@ -147,6 +183,10 @@ export const translations = {
     upToDate: "应用已是最新版本",
     languageLabel: "语言",
     themeLabel: "主题",
-    previewLabel: "媒体预览"
+    previewLabel: "媒体预览",
+    checkUpdate: "检查更新",
+    chooseFolder: "选择文件夹",
+    defaultFolder: "默认 (下载)",
+    folderMissingError: "所选文件夹不再存在！已恢复默认。请再次点击下载。"
   }
 };

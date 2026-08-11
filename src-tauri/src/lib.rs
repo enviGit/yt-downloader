@@ -63,12 +63,42 @@ async fn start_download(
         args.push("mp4".to_string());
     }
 
-    if let Ok(resource_dir) = app.path().resource_dir() {
-        let ffmpeg_dir = resource_dir.join("ffmpeg_bin");
-        if ffmpeg_dir.exists() {
-            args.push("--ffmpeg-location".to_string());
-            args.push(ffmpeg_dir.to_string_lossy().to_string());
+    let mut ffmpeg_path_str = String::new();
+    let possible_dirs = vec![
+        app.path()
+            .resource_dir()
+            .unwrap_or_default()
+            .join("ffmpeg_bin"),
+        std::env::current_exe()
+            .unwrap_or_default()
+            .parent()
+            .unwrap_or(std::path::Path::new(""))
+            .join("ffmpeg_bin"),
+        std::env::current_dir()
+            .unwrap_or_default()
+            .join("ffmpeg_bin"),
+        std::env::current_dir()
+            .unwrap_or_default()
+            .join("src-tauri")
+            .join("ffmpeg_bin"),
+    ];
+
+    for dir in possible_dirs {
+        if dir.exists() && !dir.as_os_str().is_empty() {
+            ffmpeg_path_str = dir.to_string_lossy().to_string();
+            break;
         }
+    }
+
+    if !ffmpeg_path_str.is_empty() {
+        if ffmpeg_path_str.starts_with("\\\\?\\") {
+            ffmpeg_path_str = ffmpeg_path_str.replace("\\\\?\\", "");
+        }
+
+        ffmpeg_path_str = ffmpeg_path_str.replace("\\", "/");
+
+        args.push("--ffmpeg-location".to_string());
+        args.push(ffmpeg_path_str.clone());
     }
 
     args.push("-P".to_string());
@@ -114,7 +144,11 @@ async fn start_download(
                 if payload.code == Some(0) {
                     return Ok(last_path);
                 } else {
-                    return Err(error_output);
+                    let debug_msg = format!(
+                        "FFmpeg path: '{}' | Error log: {}",
+                        ffmpeg_path_str, error_output
+                    );
+                    return Err(debug_msg);
                 }
             }
             _ => {}

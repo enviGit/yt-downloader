@@ -141,7 +141,7 @@ if (customDownloadPath) {
   updateFolderUI();
 }
 
-const ytRegex = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?.*v=|shorts\/|playlist\?.*list=)|youtu\.be\/).+$/;
+const ytRegex = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\/.+$/;
 
 function validateUrl() {
   const isValid = ytRegex.test(urlInput.value.trim());

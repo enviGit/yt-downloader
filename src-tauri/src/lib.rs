@@ -63,12 +63,41 @@ async fn start_download(
         args.push("mp4".to_string());
     }
 
+    let mut ffmpeg_path_str = String::new();
+
     if let Ok(resource_dir) = app.path().resource_dir() {
-        let ffmpeg_dir = resource_dir.join("ffmpeg_bin");
-        if ffmpeg_dir.exists() {
-            args.push("--ffmpeg-location".to_string());
-            args.push(ffmpeg_dir.to_string_lossy().to_string());
+        let dir = resource_dir.join("ffmpeg_bin");
+        if dir.exists() {
+            ffmpeg_path_str = dir.to_string_lossy().to_string();
         }
+    }
+
+    if ffmpeg_path_str.is_empty() {
+        if let Ok(exe_path) = std::env::current_exe() {
+            if let Some(parent) = exe_path.parent() {
+                let dir = parent.join("ffmpeg_bin");
+                if dir.exists() {
+                    ffmpeg_path_str = dir.to_string_lossy().to_string();
+                }
+            }
+        }
+    }
+
+    if ffmpeg_path_str.is_empty() {
+        if let Ok(cwd) = std::env::current_dir() {
+            let dir = cwd.join("ffmpeg_bin");
+            if dir.exists() {
+                ffmpeg_path_str = dir.to_string_lossy().to_string();
+            }
+        }
+    }
+
+    if !ffmpeg_path_str.is_empty() {
+        if ffmpeg_path_str.starts_with("\\\\?\\") {
+            ffmpeg_path_str = ffmpeg_path_str.replace("\\\\?\\", "");
+        }
+        args.push("--ffmpeg-location".to_string());
+        args.push(ffmpeg_path_str);
     }
 
     args.push("-P".to_string());

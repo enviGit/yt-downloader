@@ -374,6 +374,10 @@ button:disabled {
   display: none;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .progress-container {
   width: 100%;
   height: 6px;
@@ -566,4 +570,36 @@ audio.player-element {
 
 .update-link:hover {
   text-decoration: underline;
+}
+
+.playlist-container {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: left;
+}
+.playlist-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.9);
+}
+.playlist-items-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s ease;
+}
+.playlist-items-list li.completed {
+    color: #a8ff9e;
+    opacity: 0.8;
+}
+.playlist-items-list li:last-child {
+    border-bottom: none;
 }

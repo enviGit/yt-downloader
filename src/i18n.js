@@ -1,6 +1,7 @@
 export const translations = {
   en: {
-    title: "Download Video",
+    titleVideo: "Download Video",
+    titleAudio: "Download Audio",
     download: "Download",
     placeholder: "Paste YouTube link...",
     downloading: "Starting download...",
@@ -16,10 +17,13 @@ export const translations = {
     checkUpdate: "Check for updates",
     chooseFolder: "Choose Folder",
     defaultFolder: "Default (Downloads)",
-    folderMissingError: "Selected folder no longer exists! Reverted to default. Please click download again."
+    folderMissingError: "Selected folder no longer exists! Reverted to default. Please click download again.",
+    playlistLabel: "Playlist Progress",
+    playlistDone: "Playlist downloaded successfully!"
   },
   pl: {
-    title: "Pobierz Wideo",
+    titleVideo: "Pobierz Wideo",
+    titleAudio: "Pobierz Audio",
     download: "Pobierz",
     placeholder: "Wklej link do YouTube...",
     downloading: "Rozpoczynam pobieranie...",
@@ -31,14 +35,17 @@ export const translations = {
     upToDate: "Aplikacja jest aktualna",
     languageLabel: "Język",
     themeLabel: "Motyw",
-    previewLabel: "Podgląd wideo",
+    previewLabel: "Podgląd multimediów",
     checkUpdate: "Sprawdź aktualizacje",
     chooseFolder: "Wybierz folder",
     defaultFolder: "Domyślny (Pobrane)",
-    folderMissingError: "Wybrany folder już nie istnieje! Przywrócono domyślny. Kliknij pobierz ponownie."
+    folderMissingError: "Wybrany folder już nie istnieje! Przywrócono domyślny. Kliknij pobierz ponownie.",
+    playlistLabel: "Pobierane pliki",
+    playlistDone: "Pobieranie playlisty zakończone!"
   },
   fr: {
-    title: "Télécharger la vidéo",
+    titleVideo: "Télécharger la vidéo",
+    titleAudio: "Télécharger l'audio",
     download: "Télécharger",
     placeholder: "Collez le lien YouTube...",
     downloading: "Démarrage du téléchargement...",
@@ -54,10 +61,13 @@ export const translations = {
     checkUpdate: "Vérifier les mises à jour",
     chooseFolder: "Choisir le dossier",
     defaultFolder: "Défaut (Téléchargements)",
-    folderMissingError: "Le dossier sélectionné n'existe plus ! Rétabli par défaut. Veuillez cliquer à nouveau sur télécharger."
+    folderMissingError: "Le dossier sélectionné n'existe plus ! Rétabli par défaut.",
+    playlistLabel: "Progression de la liste",
+    playlistDone: "Playlist téléchargée avec succès !"
   },
   it: {
-    title: "Scarica Video",
+    titleVideo: "Scarica Video",
+    titleAudio: "Scarica Audio",
     download: "Scarica",
     placeholder: "Incolla il link di YouTube...",
     downloading: "Avvio del download...",
@@ -73,10 +83,13 @@ export const translations = {
     checkUpdate: "Controlla aggiornamenti",
     chooseFolder: "Scegli cartella",
     defaultFolder: "Predefinito (Download)",
-    folderMissingError: "La cartella selezionata non esiste più! Ripristinato al predefinito. Fai nuovamente clic su scarica."
+    folderMissingError: "La cartella selezionata non esiste più! Ripristinato al predefinito.",
+    playlistLabel: "Avanzamento playlist",
+    playlistDone: "Playlist scaricata con successo!"
   },
   pt: {
-    title: "Baixar Vídeo",
+    titleVideo: "Baixar Vídeo",
+    titleAudio: "Baixar Áudio",
     download: "Baixar",
     placeholder: "Cole o link do YouTube...",
     downloading: "Iniciando o download...",
@@ -92,10 +105,13 @@ export const translations = {
     checkUpdate: "Verificar atualizações",
     chooseFolder: "Escolher pasta",
     defaultFolder: "Padrão (Downloads)",
-    folderMissingError: "A pasta selecionada não existe mais! Revertido para o padrão. Clique em baixar novamente."
+    folderMissingError: "A pasta selecionada não existe mais! Revertido para o padrão.",
+    playlistLabel: "Progresso da Playlist",
+    playlistDone: "Playlist baixada com sucesso!"
   },
   es: {
-    title: "Descargar Video",
+    titleVideo: "Descargar Video",
+    titleAudio: "Descargar Audio",
     download: "Descargar",
     placeholder: "Pega el enlace de YouTube...",
     downloading: "Iniciando descarga...",
@@ -111,10 +127,13 @@ export const translations = {
     checkUpdate: "Buscar actualizaciones",
     chooseFolder: "Elegir carpeta",
     defaultFolder: "Predeterminado (Descargas)",
-    folderMissingError: "¡La carpeta seleccionada ya no existe! Restablecido al predeterminado. Haz clic en descargar nuevamente."
+    folderMissingError: "¡La carpeta seleccionada ya no existe! Restablecido al predeterminado.",
+    playlistLabel: "Progreso de la lista",
+    playlistDone: "¡Lista de reproducción descargada con éxito!"
   },
   de: {
-    title: "Video Herunterladen",
+    titleVideo: "Video Herunterladen",
+    titleAudio: "Audio Herunterladen",
     download: "Herunterladen",
     placeholder: "YouTube-Link einfügen...",
     downloading: "Download wird gestartet...",
@@ -130,10 +149,13 @@ export const translations = {
     checkUpdate: "Auf Updates prüfen",
     chooseFolder: "Ordner auswählen",
     defaultFolder: "Standard (Downloads)",
-    folderMissingError: "Der ausgewählte Ordner existiert nicht mehr! Auf Standard zurückgesetzt. Bitte klicke erneut auf Herunterladen."
+    folderMissingError: "Der ausgewählte Ordner existiert nicht mehr! Auf Standard zurückgesetzt.",
+    playlistLabel: "Playlist-Fortschritt",
+    playlistDone: "Playlist erfolgreich heruntergeladen!"
   },
   ko: {
-    title: "비디오 다운로드",
+    titleVideo: "비디오 다운로드",
+    titleAudio: "오디오 다운로드",
     download: "다운로드",
     placeholder: "YouTube 링크 붙여넣기...",
     downloading: "다운로드 시작 중...",
@@ -149,10 +171,13 @@ export const translations = {
     checkUpdate: "업데이트 확인",
     chooseFolder: "폴더 선택",
     defaultFolder: "기본값 (다운로드)",
-    folderMissingError: "선택한 폴더가 더 이상 존재하지 않습니다! 기본값으로 돌아갔습니다. 다시 다운로드를 클릭해주세요."
+    folderMissingError: "선택한 폴더가 존재하지 않습니다! 기본값으로 복원되었습니다.",
+    playlistLabel: "재생목록 진행 상황",
+    playlistDone: "재생목록 다운로드가 완료되었습니다!"
   },
   ja: {
-    title: "ビデオをダウンロード",
+    titleVideo: "ビデオをダウンロード",
+    titleAudio: "オーディオをダウンロード",
     download: "ダウンロード",
     placeholder: "YouTubeのリンクを貼り付け...",
     downloading: "ダウンロードを開始しています...",
@@ -168,10 +193,13 @@ export const translations = {
     checkUpdate: "アップデートを確認",
     chooseFolder: "フォルダを選択",
     defaultFolder: "デフォルト (ダウンロード)",
-    folderMissingError: "選択したフォルダはもう存在しません！デフォルトに戻りました。もう一度ダウンロードをクリックしてください。"
+    folderMissingError: "選択したフォルダは存在しません！デフォルトに戻りました。",
+    playlistLabel: "プレイリストの進捗",
+    playlistDone: "プレイリストのダウンロードが完了しました！"
   },
   zh: {
-    title: "下载视频",
+    titleVideo: "下载视频",
+    titleAudio: "下载音频",
     download: "下载",
     placeholder: "粘贴 YouTube 链接...",
     downloading: "开始下载...",
@@ -187,6 +215,8 @@ export const translations = {
     checkUpdate: "检查更新",
     chooseFolder: "选择文件夹",
     defaultFolder: "默认 (下载)",
-    folderMissingError: "所选文件夹不再存在！已恢复默认。请再次点击下载。"
+    folderMissingError: "所选文件夹不再存在！已恢复默认。",
+    playlistLabel: "播放列表进度",
+    playlistDone: "播放列表下载完成！"
   }
 };

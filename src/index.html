@@ -139,7 +139,7 @@
             </header>
 
             <main class="content">
-                <h1 data-i18n="title">Download Video</h1>
+                <h1 id="main-title" data-i18n="titleVideo">Download Video</h1>
 
                 <div class="input-group">
                     <input
@@ -207,6 +207,13 @@
                 </div>
 
                 <p id="status-message"></p>
+
+                <div id="playlist-container" class="playlist-container hidden">
+                    <div class="preview-header">
+                        <span class="dropdown-label" data-i18n="playlistLabel">Playlist Progress</span>
+                    </div>
+                    <ul id="playlist-items" class="playlist-items-list"></ul>
+                </div>
 
                 <div id="media-preview" class="media-preview hidden">
                     <div class="preview-header">

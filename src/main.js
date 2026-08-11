@@ -5,6 +5,7 @@ const { convertFileSrc } = window.__TAURI__.core;
 const { getVersion } = window.__TAURI__.app;
 const { listen } = window.__TAURI__.event;
 
+const mainTitle = document.getElementById('main-title');
 const downloadBtn = document.getElementById('download-btn');
 const urlInput = document.getElementById('url-input');
 const statusMessage = document.getElementById('status-message');
@@ -23,6 +24,9 @@ const mediaPreviewBlock = document.getElementById('media-preview');
 const videoPlayer = document.getElementById('video-player');
 const audioPlayer = document.getElementById('audio-player');
 
+const playlistContainer = document.getElementById('playlist-container');
+const playlistItems = document.getElementById('playlist-items');
+
 const savedLang = localStorage.getItem('appLang') || 'en';
 const savedTheme = localStorage.getItem('appTheme') || 'theme-orchid-plum';
 const savedFormat = localStorage.getItem('appFormat') || 'video';
@@ -30,6 +34,7 @@ let customDownloadPath = localStorage.getItem('appDownloadPath') || null;
 
 let currentLang = savedLang;
 let isDownloading = false;
+let isProcessing = false;
 let downloadPhase = 1;
 let lastPercentage = 0;
 let selectedFormat = savedFormat;
@@ -39,6 +44,17 @@ let targetPercent = 0;
 let currentPercent = 0;
 let animationFrameId = null;
 
+let isPlaylist = false;
+let currentPlaylistItem = null;
+
+function updateTitleUI(format) {
+  if (!mainTitle) return;
+  const key = format === 'audio' ? 'titleAudio' : 'titleVideo';
+  mainTitle.setAttribute('data-i18n', key);
+  const t = translations[currentLang] || translations['en'];
+  mainTitle.textContent = t[key] || (format === 'audio' ? 'Download Audio' : 'Download Video');
+}
+
 const formatVideoRadio = document.getElementById('format-video');
 const formatAudioRadio = document.getElementById('format-audio');
 if (savedFormat === 'audio') {
@@ -46,11 +62,13 @@ if (savedFormat === 'audio') {
 } else {
   formatVideoRadio.checked = true;
 }
+updateTitleUI(savedFormat);
 
 radioFormatInputs.forEach(input => {
   input.addEventListener('change', (e) => {
     selectedFormat = e.target.value;
     localStorage.setItem('appFormat', selectedFormat);
+    updateTitleUI(selectedFormat);
   });
 });
 
@@ -80,7 +98,7 @@ if (customDownloadPath) {
   updateFolderUI();
 }
 
-const ytRegex = /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|playlist\?list=)|youtu\.be\/).+$/;
+const ytRegex = /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com\/(watch\?.*v=|shorts\/|playlist\?.*list=)|youtu\.be\/).+$/;
 
 function validateUrl() {
   const isValid = ytRegex.test(urlInput.value.trim());
@@ -124,6 +142,7 @@ function updateLanguage(lang) {
   if (translations[lang]) {
     urlInput.placeholder = translations[lang].placeholder;
   }
+  updateTitleUI(selectedFormat);
 }
 
 document.body.className = savedTheme;
@@ -254,17 +273,64 @@ function updateProgressBarDOM(val) {
 
 listen('ytdlp-stdout', (event) => {
   const line = event.payload;
+  const playlistMatch = line.match(/Downloading (?:video|item) (\d+) of (\d+)/);
 
-  if (line.includes('[ExtractAudio]') || line.includes('[Destination]') && selectedFormat === 'audio' && lastPercentage > 90) {
+  if (playlistMatch) {
+      const totalItems = parseInt(playlistMatch[2], 10);
+      const t = translations[currentLang] || translations['en'];
+
+      // Zawsze zerujemy pasek przy nowym elemencie, żeby postęp szedł płynnie od zera
+      lastPercentage = 0;
+      downloadPhase = 1;
+      targetPercent = 0;
+      currentPercent = 0;
+      isProcessing = false;
+      progressBar.classList.remove('indeterminate');
+
+      // Uruchamiamy widok playlisty TYLKO jeśli plików jest więcej niż 1
+      if (totalItems > 1) {
+          statusMessage.textContent = `[${playlistMatch[1]}/${playlistMatch[2]}] ${t.downloading || "Starting download..."}`;
+          isPlaylist = true;
+          playlistContainer.classList.remove('hidden');
+
+          if (currentPlaylistItem) {
+              currentPlaylistItem.textContent = currentPlaylistItem.textContent.replace('⏳', '✅');
+              currentPlaylistItem.classList.add('completed');
+          }
+
+          const li = document.createElement('li');
+          li.textContent = `[${playlistMatch[1]}/${playlistMatch[2]}] ⏳ ...`;
+          playlistItems.appendChild(li);
+          currentPlaylistItem = li;
+          playlistItems.scrollTop = playlistItems.scrollHeight;
+      } else {
+          statusMessage.textContent = t.downloading || "Starting download...";
+      }
+
+      return;
+    }
+
+  const destMatch = line.match(/Destination:\s*(.*)/) || line.match(/Merging formats into "(.*?)"/);
+  if (destMatch && currentPlaylistItem) {
+      const fullPath = destMatch[1];
+      const fileName = fullPath.split(/[\\/]/).pop();
+      const prefixMatch = currentPlaylistItem.textContent.match(/\[\d+\/\d+\]/);
+      if (prefixMatch) {
+          currentPlaylistItem.textContent = `${prefixMatch[0]} ⏳ ${fileName}`;
+      }
+  }
+
+  if (line.includes('[ExtractAudio]') || line.includes('[Merger]') || line.includes('Merging formats') || (line.includes('[Destination]') && selectedFormat === 'audio' && lastPercentage > 90)) {
+    isProcessing = true;
     progressBar.classList.add('indeterminate');
-    statusMessage.textContent = "Extracting audio and converting to MP3...";
+    statusMessage.textContent = selectedFormat === 'audio' ? "Extracting audio and converting to MP3..." : "Merging video & audio...";
     document.getElementById('progress-percent').textContent = "99%";
     document.getElementById('progress-speed').textContent = "Processing...";
     targetPercent = 99.5;
     return;
   }
 
-  if (line.includes('[download]') && line.includes('%')) {
+  if (!isProcessing && line.includes('[download]') && line.includes('%')) {
     progressBar.classList.remove('indeterminate');
 
     const percentMatch = line.match(/(\d+\.\d+)%/);
@@ -315,15 +381,22 @@ downloadBtn.addEventListener('click', async () => {
         localStorage.removeItem('appDownloadPath');
         updateFolderUI();
         const t = translations[currentLang] || translations['en'];
-        statusMessage.textContent = t.folderMissingError || "Selected folder no longer exists! Reverted to default. Please click download again.";        return;
+        statusMessage.textContent = t.folderMissingError || "Selected folder no longer exists! Reverted to default. Please click download again.";
+        return;
       }
     }
 
   isDownloading = true;
+  isProcessing = false;
+  isPlaylist = false;
+  currentPlaylistItem = null;
   downloadPhase = 1;
   lastPercentage = 0;
   targetPercent = 0;
   currentPercent = 0;
+
+  playlistItems.innerHTML = '';
+  playlistContainer.classList.add('hidden');
 
   selectedFormat = document.querySelector('input[name="format"]:checked').value;
 
@@ -362,12 +435,22 @@ downloadBtn.addEventListener('click', async () => {
     progressContainer.classList.remove('active');
     progressStats.classList.remove('visible');
 
-    if (!downloadedFilePath.includes('/') && !downloadedFilePath.includes('\\')) {
-       statusMessage.textContent = downloadedFilePath;
-       return;
+    if (currentPlaylistItem) {
+        currentPlaylistItem.textContent = currentPlaylistItem.textContent.replace('⏳', '✅');
+        currentPlaylistItem.classList.add('completed');
     }
 
-    statusMessage.textContent = "Download complete!";
+    if (!downloadedFilePath.includes('/') && !downloadedFilePath.includes('\\')) {
+        statusMessage.textContent = downloadedFilePath;
+        return;
+    }
+
+    const t = translations[currentLang] || translations['en'];
+    if (isPlaylist) {
+        statusMessage.textContent = t.playlistDone || "Playlist downloaded successfully!";
+    } else {
+        statusMessage.textContent = "Download complete!";
+    }
 
     setTimeout(() => {
       currentFilePath = downloadedFilePath;

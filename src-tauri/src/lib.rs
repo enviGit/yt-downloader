@@ -36,7 +36,7 @@ async fn start_download(
 
     args.push("--newline".to_string());
     args.push("--no-colors".to_string());
-
+    args.push("--yes-playlist".to_string());
     args.push("--extractor-args".to_string());
     args.push("youtube:player_client=android,web".to_string());
 
@@ -44,6 +44,8 @@ async fn start_download(
         args.push("-x".to_string());
         args.push("--audio-format".to_string());
         args.push("mp3".to_string());
+        args.push("--audio-quality".to_string());
+        args.push("0".to_string());
     } else {
         args.push("-f".to_string());
         args.push("bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best".to_string());
@@ -78,9 +80,7 @@ async fn start_download(
             CommandEvent::Stdout(line) => {
                 let text = String::from_utf8_lossy(&line).to_string();
 
-                if text.contains("[download]") && text.contains('%') {
-                    let _ = app.emit("ytdlp-stdout", text.clone());
-                }
+                let _ = app.emit("ytdlp-stdout", text.clone());
 
                 if text.contains("Destination: ") || text.contains("Merging formats into \"") {
                     if let Some(p) = text

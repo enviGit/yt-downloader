@@ -12,16 +12,10 @@ async fn start_download(
     app: AppHandle,
     url: String,
     format: String,
+    quality: String,
     custom_path: Option<String>,
 ) -> Result<String, String> {
     let mut args = vec![];
-
-    let resource_dir = app
-        .path()
-        .resource_dir()
-        .map_err(|e| format!("Failed to find resource directory: {}", e))?;
-
-    let ffmpeg_dir = resource_dir.join("ffmpeg_bin");
 
     let download_dir = match custom_path {
         Some(p) if !p.is_empty() => p,
@@ -36,6 +30,7 @@ async fn start_download(
 
     args.push("--newline".to_string());
     args.push("--no-colors".to_string());
+    args.push("--no-warnings".to_string());
     args.push("--yes-playlist".to_string());
     args.push("--extractor-args".to_string());
     args.push("youtube:player_client=android,web".to_string());
@@ -45,16 +40,36 @@ async fn start_download(
         args.push("--audio-format".to_string());
         args.push("mp3".to_string());
         args.push("--audio-quality".to_string());
-        args.push("0".to_string());
+
+        let aq = match quality.as_str() {
+            "high" => "2",
+            "medium" => "5",
+            "low" => "9",
+            _ => "0",
+        };
+        args.push(aq.to_string());
     } else {
         args.push("-f".to_string());
-        args.push("bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best".to_string());
+
+        let vq = match quality.as_str() {
+            "1080p" => "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
+            "720p" => "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best",
+            "480p" => "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best",
+            _ => "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+        };
+        args.push(vq.to_string());
+
         args.push("--merge-output-format".to_string());
         args.push("mp4".to_string());
     }
 
-    args.push("--ffmpeg-location".to_string());
-    args.push(ffmpeg_dir.to_string_lossy().to_string());
+    if let Ok(resource_dir) = app.path().resource_dir() {
+        let ffmpeg_dir = resource_dir.join("ffmpeg_bin");
+        if ffmpeg_dir.exists() {
+            args.push("--ffmpeg-location".to_string());
+            args.push(ffmpeg_dir.to_string_lossy().to_string());
+        }
+    }
 
     args.push("-P".to_string());
     args.push(download_dir);

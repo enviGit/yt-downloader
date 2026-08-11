@@ -30,6 +30,9 @@ const playlistItems = document.getElementById('playlist-items');
 const savedLang = localStorage.getItem('appLang') || 'en';
 const savedTheme = localStorage.getItem('appTheme') || 'theme-orchid-plum';
 const savedFormat = localStorage.getItem('appFormat') || 'video';
+const qualityTrigger = document.getElementById('quality-trigger');
+const qualityOptionsContainer = document.getElementById('quality-options');
+let selectedQuality = 'best';
 let customDownloadPath = localStorage.getItem('appDownloadPath') || null;
 
 let currentLang = savedLang;
@@ -47,6 +50,44 @@ let animationFrameId = null;
 let isPlaylist = false;
 let currentPlaylistItem = null;
 
+function setupQualityDropdownListeners() {
+  const options = qualityOptionsContainer.querySelectorAll('.option');
+  options.forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedQuality = opt.getAttribute('data-value');
+      qualityTrigger.textContent = opt.textContent;
+      qualityOptionsContainer.classList.remove('open');
+      qualityTrigger.classList.remove('active');
+    });
+  });
+}
+
+function updateQualityOptions(format) {
+    if (!qualityOptionsContainer || !qualityTrigger) return;
+
+    if (format === 'audio') {
+        qualityOptionsContainer.innerHTML = `
+            <div class="option" data-value="best">Best (Opus/AAC max)</div>
+            <div class="option" data-value="high">High (256 kbps)</div>
+            <div class="option" data-value="medium">Medium (128 kbps)</div>
+            <div class="option" data-value="low">Low (48-64 kbps)</div>
+        `;
+        qualityTrigger.textContent = 'Best (Opus/AAC max)';
+    } else {
+        qualityOptionsContainer.innerHTML = `
+            <div class="option" data-value="best">Best (Source)</div>
+            <div class="option" data-value="1080p">1080p (FHD)</div>
+            <div class="option" data-value="720p">720p (HD)</div>
+            <div class="option" data-value="480p">480p (SD)</div>
+        `;
+        qualityTrigger.textContent = 'Best (Source)';
+    }
+
+    selectedQuality = 'best';
+    setupQualityDropdownListeners();
+}
+
 function updateTitleUI(format) {
   if (!mainTitle) return;
   const key = format === 'audio' ? 'titleAudio' : 'titleVideo';
@@ -62,12 +103,14 @@ if (savedFormat === 'audio') {
 } else {
   formatVideoRadio.checked = true;
 }
+updateQualityOptions(savedFormat);
 updateTitleUI(savedFormat);
 
 radioFormatInputs.forEach(input => {
   input.addEventListener('change', (e) => {
     selectedFormat = e.target.value;
     localStorage.setItem('appFormat', selectedFormat);
+    updateQualityOptions(selectedFormat);
     updateTitleUI(selectedFormat);
   });
 });
@@ -323,7 +366,10 @@ listen('ytdlp-stdout', (event) => {
   if (line.includes('[ExtractAudio]') || line.includes('[Merger]') || line.includes('Merging formats') || (line.includes('[Destination]') && selectedFormat === 'audio' && lastPercentage > 90)) {
     isProcessing = true;
     progressBar.classList.add('indeterminate');
-    statusMessage.textContent = selectedFormat === 'audio' ? "Extracting audio and converting to MP3..." : "Merging video & audio...";
+
+    const t = translations[currentLang] || translations['en'];
+    statusMessage.textContent = selectedFormat === 'audio' ? (t.extractingAudio || "Extracting audio and converting to MP3...") : (t.mergingVideo || "Merging video & audio...");
+
     document.getElementById('progress-percent').textContent = "99%";
     document.getElementById('progress-speed').textContent = "Processing...";
     targetPercent = 99.5;
@@ -421,10 +467,11 @@ downloadBtn.addEventListener('click', async () => {
 
   try {
     const downloadedFilePath = await invoke('start_download', {
-      url: url,
-      format: selectedFormat,
-      customPath: customDownloadPath
-    });
+        url: url,
+        format: selectedFormat,
+        quality: selectedQuality,
+        customPath: customDownloadPath
+      });
 
     progressBar.classList.remove('indeterminate');
     targetPercent = 100;
@@ -446,10 +493,11 @@ downloadBtn.addEventListener('click', async () => {
     }
 
     const t = translations[currentLang] || translations['en'];
+
     if (isPlaylist) {
         statusMessage.textContent = t.playlistDone || "Playlist downloaded successfully!";
     } else {
-        statusMessage.textContent = "Download complete!";
+        statusMessage.textContent = t.downloadComplete || "Download complete!";
     }
 
     setTimeout(() => {

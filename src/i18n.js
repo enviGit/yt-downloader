@@ -19,7 +19,10 @@ export const translations = {
     defaultFolder: "Default (Downloads)",
     folderMissingError: "Selected folder no longer exists! Reverted to default. Please click download again.",
     playlistLabel: "Playlist Progress",
-    playlistDone: "Playlist downloaded successfully!"
+    playlistDone: "Playlist downloaded successfully!",
+    downloadComplete: "Download complete!",
+    extractingAudio: "Extracting audio and converting to MP3...",
+    mergingVideo: "Merging video & audio..."
   },
   pl: {
     titleVideo: "Pobierz Wideo",
@@ -41,7 +44,10 @@ export const translations = {
     defaultFolder: "Domyślny (Pobrane)",
     folderMissingError: "Wybrany folder już nie istnieje! Przywrócono domyślny. Kliknij pobierz ponownie.",
     playlistLabel: "Pobierane pliki",
-    playlistDone: "Pobieranie playlisty zakończone!"
+    playlistDone: "Pobieranie playlisty zakończone!",
+    downloadComplete: "Pobieranie zakończone!",
+    extractingAudio: "Wyodrębnianie i konwersja do MP3...",
+    mergingVideo: "Łączenie obrazu i dźwięku..."
   },
   fr: {
     titleVideo: "Télécharger la vidéo",
@@ -63,7 +69,10 @@ export const translations = {
     defaultFolder: "Défaut (Téléchargements)",
     folderMissingError: "Le dossier sélectionné n'existe plus ! Rétabli par défaut.",
     playlistLabel: "Progression de la liste",
-    playlistDone: "Playlist téléchargée avec succès !"
+    playlistDone: "Playlist téléchargée avec succès !",
+    downloadComplete: "Téléchargement terminé !",
+    extractingAudio: "Extraction et conversion en MP3...",
+    mergingVideo: "Fusion de la vidéo et de l'audio..."
   },
   it: {
     titleVideo: "Scarica Video",
@@ -85,7 +94,10 @@ export const translations = {
     defaultFolder: "Predefinito (Download)",
     folderMissingError: "La cartella selezionata non esiste più! Ripristinato al predefinito.",
     playlistLabel: "Avanzamento playlist",
-    playlistDone: "Playlist scaricata con successo!"
+    playlistDone: "Playlist scaricata con successo!",
+    downloadComplete: "Download completato!",
+    extractingAudio: "Estrazione e conversione in MP3...",
+    mergingVideo: "Unione di video e audio..."
   },
   pt: {
     titleVideo: "Baixar Vídeo",
@@ -107,7 +119,10 @@ export const translations = {
     defaultFolder: "Padrão (Downloads)",
     folderMissingError: "A pasta selecionada não existe mais! Revertido para o padrão.",
     playlistLabel: "Progresso da Playlist",
-    playlistDone: "Playlist baixada com sucesso!"
+    playlistDone: "Playlist baixada com sucesso!",
+    downloadComplete: "Download concluído!",
+    extractingAudio: "Extraindo áudio e convertendo para MP3...",
+    mergingVideo: "Mesclando vídeo e áudio..."
   },
   es: {
     titleVideo: "Descargar Video",
@@ -129,7 +144,10 @@ export const translations = {
     defaultFolder: "Predeterminado (Descargas)",
     folderMissingError: "¡La carpeta seleccionada ya no existe! Restablecido al predeterminado.",
     playlistLabel: "Progreso de la lista",
-    playlistDone: "¡Lista de reproducción descargada con éxito!"
+    playlistDone: "¡Lista de reproducción descargada con éxito!",
+    downloadComplete: "¡Descarga completada!",
+    extractingAudio: "Extrayendo audio y convirtiendo a MP3...",
+    mergingVideo: "Fusionando video y audio..."
   },
   de: {
     titleVideo: "Video Herunterladen",
@@ -151,7 +169,10 @@ export const translations = {
     defaultFolder: "Standard (Downloads)",
     folderMissingError: "Der ausgewählte Ordner existiert nicht mehr! Auf Standard zurückgesetzt.",
     playlistLabel: "Playlist-Fortschritt",
-    playlistDone: "Playlist erfolgreich heruntergeladen!"
+    playlistDone: "Playlist erfolgreich heruntergeladen!",
+    downloadComplete: "Download abgeschlossen!",
+    extractingAudio: "Audio wird extrahiert und in MP3 konvertiert...",
+    mergingVideo: "Video & Audio werden zusammengeführt..."
   },
   ko: {
     titleVideo: "비디오 다운로드",
@@ -173,7 +194,10 @@ export const translations = {
     defaultFolder: "기본값 (다운로드)",
     folderMissingError: "선택한 폴더가 존재하지 않습니다! 기본값으로 복원되었습니다.",
     playlistLabel: "재생목록 진행 상황",
-    playlistDone: "재생목록 다운로드가 완료되었습니다!"
+    playlistDone: "재생목록 다운로드가 완료되었습니다!",
+    downloadComplete: "다운로드 완료!",
+    extractingAudio: "오디오 추출 및 MP3로 변환 중...",
+    mergingVideo: "비디오 및 오디오 병합 중..."
   },
   ja: {
     titleVideo: "ビデオをダウンロード",
@@ -195,7 +219,10 @@ export const translations = {
     defaultFolder: "デフォルト (ダウンロード)",
     folderMissingError: "選択したフォルダは存在しません！デフォルトに戻りました。",
     playlistLabel: "プレイリストの進捗",
-    playlistDone: "プレイリストのダウンロードが完了しました！"
+    playlistDone: "プレイリストのダウンロードが完了しました！",
+    downloadComplete: "ダウンロード完了！",
+    extractingAudio: "オーディオを抽出してMP3に変換中...",
+    mergingVideo: "ビデオとオーディオを結合中..."
   },
   zh: {
     titleVideo: "下载视频",
@@ -217,6 +244,9 @@ export const translations = {
     defaultFolder: "默认 (下载)",
     folderMissingError: "所选文件夹不再存在！已恢复默认。",
     playlistLabel: "播放列表进度",
-    playlistDone: "播放列表下载完成！"
+    playlistDone: "播放列表下载完成！",
+    downloadComplete: "下载完成！",
+    extractingAudio: "正在提取音频并转换为 MP3...",
+    mergingVideo: "正在合并视频和音频..."
   }
 };

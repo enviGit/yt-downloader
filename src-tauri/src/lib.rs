@@ -64,31 +64,29 @@ async fn start_download(
     }
 
     let mut ffmpeg_path_str = String::new();
+    let possible_dirs = vec![
+        app.path()
+            .resource_dir()
+            .unwrap_or_default()
+            .join("ffmpeg_bin"),
+        std::env::current_exe()
+            .unwrap_or_default()
+            .parent()
+            .unwrap_or(std::path::Path::new(""))
+            .join("ffmpeg_bin"),
+        std::env::current_dir()
+            .unwrap_or_default()
+            .join("ffmpeg_bin"),
+        std::env::current_dir()
+            .unwrap_or_default()
+            .join("src-tauri")
+            .join("ffmpeg_bin"),
+    ];
 
-    if let Ok(resource_dir) = app.path().resource_dir() {
-        let dir = resource_dir.join("ffmpeg_bin");
-        if dir.exists() {
+    for dir in possible_dirs {
+        if dir.exists() && !dir.as_os_str().is_empty() {
             ffmpeg_path_str = dir.to_string_lossy().to_string();
-        }
-    }
-
-    if ffmpeg_path_str.is_empty() {
-        if let Ok(exe_path) = std::env::current_exe() {
-            if let Some(parent) = exe_path.parent() {
-                let dir = parent.join("ffmpeg_bin");
-                if dir.exists() {
-                    ffmpeg_path_str = dir.to_string_lossy().to_string();
-                }
-            }
-        }
-    }
-
-    if ffmpeg_path_str.is_empty() {
-        if let Ok(cwd) = std::env::current_dir() {
-            let dir = cwd.join("ffmpeg_bin");
-            if dir.exists() {
-                ffmpeg_path_str = dir.to_string_lossy().to_string();
-            }
+            break;
         }
     }
 
@@ -96,8 +94,11 @@ async fn start_download(
         if ffmpeg_path_str.starts_with("\\\\?\\") {
             ffmpeg_path_str = ffmpeg_path_str.replace("\\\\?\\", "");
         }
+
+        ffmpeg_path_str = ffmpeg_path_str.replace("\\", "/");
+
         args.push("--ffmpeg-location".to_string());
-        args.push(ffmpeg_path_str);
+        args.push(ffmpeg_path_str.clone());
     }
 
     args.push("-P".to_string());
@@ -143,7 +144,11 @@ async fn start_download(
                 if payload.code == Some(0) {
                     return Ok(last_path);
                 } else {
-                    return Err(error_output);
+                    let debug_msg = format!(
+                        "FFmpeg path: '{}' | Error log: {}",
+                        ffmpeg_path_str, error_output
+                    );
+                    return Err(debug_msg);
                 }
             }
             _ => {}

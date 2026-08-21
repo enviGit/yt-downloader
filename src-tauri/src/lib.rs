@@ -1,3 +1,4 @@
+use std::path::Path;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
@@ -6,6 +7,15 @@ use tauri_plugin_shell::ShellExt;
 fn file_exists(path: String) -> bool {
     std::path::Path::new(&path).exists()
 }
+
+#[cfg(target_os = "windows")]
+fn remove_zone_identifier(path: &Path) {
+    let zone_stream = format!("{}:Zone.Identifier", path.display());
+    let _ = std::fs::remove_file(zone_stream);
+}
+
+#[cfg(not(target_os = "windows"))]
+fn remove_zone_identifier(_path: &Path) {}
 
 #[tauri::command]
 async fn start_download(
@@ -90,6 +100,20 @@ async fn start_download(
         .into_iter()
         .find(|d| d.exists() && !d.as_os_str().is_empty())
     {
+        let ffmpeg_exe = dir.join(if cfg!(target_os = "windows") {
+            "ffmpeg.exe"
+        } else {
+            "ffmpeg"
+        });
+        let ffprobe_exe = dir.join(if cfg!(target_os = "windows") {
+            "ffprobe.exe"
+        } else {
+            "ffprobe"
+        });
+
+        remove_zone_identifier(&ffmpeg_exe);
+        remove_zone_identifier(&ffprobe_exe);
+
         let raw_path = dir.to_string_lossy().into_owned();
 
         let clean_path = raw_path

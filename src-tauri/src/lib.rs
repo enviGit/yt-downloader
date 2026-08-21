@@ -170,7 +170,19 @@ async fn start_download(
             }
             CommandEvent::Terminated(payload) => {
                 if payload.code == Some(0) {
-                    return Ok(last_path);
+                    let final_path = if Path::new(&last_path).exists() {
+                        last_path
+                    } else {
+                        let target_ext = if format == "audio" { "mp3" } else { "mp4" };
+                        let alt_path = Path::new(&last_path).with_extension(target_ext);
+                        if alt_path.exists() {
+                            alt_path.to_string_lossy().into_owned()
+                        } else {
+                            last_path
+                        }
+                    };
+
+                    return Ok(final_path);
                 } else {
                     return Err(format!(
                         "FFmpeg path: '{}' | Error log: {}",

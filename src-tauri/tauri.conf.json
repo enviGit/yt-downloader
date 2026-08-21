@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "YTDownloader",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "identifier": "com.envi.yt-downloader",
   "build": {
     "frontendDist": "../src"
@@ -18,7 +18,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' https://api.github.com; media-src 'self' asset:; img-src 'self' asset: data:; style-src 'self' 'unsafe-inline';",
+      "csp": "default-src 'self'; connect-src 'self' https://api.github.com; media-src 'self' asset: http://asset.localhost https://asset.localhost; img-src 'self' asset: http://asset.localhost https://asset.localhost data:; style-src 'self' 'unsafe-inline';",
       "assetProtocol": {
         "enable": true,
         "scope": [
@@ -33,7 +33,7 @@
     "publisher": "Pawel Trojanski",
     "copyright": "Copyright (c) 2026",
     "resources": [
-        "ffmpeg_bin"
+      "ffmpeg_bin"
     ],
     "externalBin": [
       "binaries/yt-dlp"

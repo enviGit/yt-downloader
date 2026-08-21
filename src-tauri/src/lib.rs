@@ -5,7 +5,7 @@ use tauri_plugin_shell::ShellExt;
 
 #[tauri::command]
 fn file_exists(path: String) -> bool {
-    std::path::Path::new(&path).exists()
+    Path::new(&path).exists()
 }
 
 #[cfg(target_os = "windows")]
@@ -83,7 +83,7 @@ async fn start_download(
         std::env::current_exe()
             .unwrap_or_default()
             .parent()
-            .unwrap_or(std::path::Path::new(""))
+            .unwrap_or(Path::new(""))
             .join("ffmpeg_bin"),
         std::env::current_dir()
             .unwrap_or_default()
@@ -100,26 +100,30 @@ async fn start_download(
         .into_iter()
         .find(|d| d.exists() && !d.as_os_str().is_empty())
     {
-        let ffmpeg_exe = dir.join(if cfg!(target_os = "windows") {
+        let exe_name = if cfg!(target_os = "windows") {
             "ffmpeg.exe"
         } else {
             "ffmpeg"
-        });
-        let ffprobe_exe = dir.join(if cfg!(target_os = "windows") {
+        };
+        let probe_name = if cfg!(target_os = "windows") {
             "ffprobe.exe"
         } else {
             "ffprobe"
-        });
+        };
+
+        let ffmpeg_exe = dir.join(exe_name);
+        let ffprobe_exe = dir.join(probe_name);
 
         remove_zone_identifier(&ffmpeg_exe);
         remove_zone_identifier(&ffprobe_exe);
 
-        let raw_path = dir.to_string_lossy().into_owned();
+        let target_path = if ffmpeg_exe.exists() { ffmpeg_exe } else { dir };
 
+        let raw_path = target_path.to_string_lossy();
         let clean_path = raw_path
-            .strip_prefix("\\\\?\\")
+            .strip_prefix(r"\\?\")
             .unwrap_or(&raw_path)
-            .replace('\\', "/");
+            .to_string();
 
         ffmpeg_debug_path = clean_path.clone();
 

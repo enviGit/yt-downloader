@@ -33,10 +33,7 @@
     "publisher": "Pawel Trojanski",
     "copyright": "Copyright (c) 2026",
     "resources": [
-      "ffmpeg_bin/ffmpeg",
-      "ffmpeg_bin/ffprobe",
-      "ffmpeg_bin/ffmpeg.exe",
-      "ffmpeg_bin/ffprobe.exe"
+        "ffmpeg_bin"
     ],
     "externalBin": [
       "binaries/yt-dlp"

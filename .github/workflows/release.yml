@@ -36,6 +36,15 @@ jobs:
         if: runner.os == 'Windows'
         run: cd src-tauri && cargo clean
 
+      - name: Prune unused binaries
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            rm -f src-tauri/ffmpeg_bin/ffmpeg src-tauri/ffmpeg_bin/ffprobe
+          else
+            rm -f src-tauri/ffmpeg_bin/*.exe
+          fi
+
       - name: Build and publish Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
